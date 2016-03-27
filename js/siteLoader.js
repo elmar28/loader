@@ -19,7 +19,7 @@ var StartLoader = (function (_super) {
 			$(window).on('MSPointerDown', _this.stopscroll)
 		}
 
-		$(window).on('load',function(){
+		/*$(window).on('load',function(){
 			setTimeout(function(){
 				$(window).off('keydown touchstart', _this.stopscroll);
 				$(window,document).off('DOMMouseScroll mousewheel', _this.stopscroll);
@@ -29,7 +29,7 @@ var StartLoader = (function (_super) {
 					$(window).off('MSPointerDown', _this.stopscroll)
 				}
 			},1000);
-		});
+		});}*/
 
 	};
 
@@ -40,7 +40,7 @@ var StartLoader = (function (_super) {
 
 		_this.node = params && params.node && $(params.node)|| _this.node;
 
-		$loaderArea.css({height: $(window).height()+'px', width: $(window).width()+'px',top: window.pageYOffset}).css('top',window.pageYOffset)
+		$loaderArea.css({'height': $(window).height()+'px', 'width': $(window).width()+'px','top': window.pageYOffset==0 && '1px' ||window.pageYOffset+'px'})
 			.removeClass('unvisible');
 
 		$('body').css({height:document.documentElement.scrollHeight+'px', width: $(window).width()+'px',overflow:'hidden'});
@@ -60,13 +60,21 @@ var StartLoader = (function (_super) {
 				setTimeout(function(){
 					params.callback();
 
-					if($.platform.type!='pc' && $.platform.type!='tablet'){
+					if($loaderArea.css('top')=='1px'){
 						scrollTo(0, 1);
 					}
 
 					$loaderArea.find('img').fadeOut(300).queue(function() {
-						$loaderArea.fadeOut(3000).queue(function() {
+						$loaderArea.fadeOut(2500).queue(function() {
 							$loaderArea.css('display','').addClass('unvisible');
+
+							$(window).off('keydown touchstart', _this.stopscroll);
+							$(window,document).off('DOMMouseScroll mousewheel', _this.stopscroll);
+
+							if(window.navigator.msPointerEnabled) {
+								// "Pointer" イベント が利用可能
+								$(window).off('MSPointerDown', _this.stopscroll)
+							}
 						});
 					});
 
